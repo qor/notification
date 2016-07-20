@@ -11,6 +11,7 @@ func (notification *Notification) Action(action *Action) {
 
 type ActionArgument struct {
 	Message  *Message
+	Context  *admin.Context
 	Argument interface{}
 }
 
