@@ -1,48 +1,22 @@
 package notification
 
-import (
-	"time"
-
-	"github.com/jinzhu/gorm"
-	"github.com/qor/qor"
-	"github.com/qor/serializable_meta"
-)
-
-func Get(context *qor.Context) []Notification {
-	return []Notification{}
-}
-
-func New(notification *Notification, context *qor.Context) {
-	for _, channel := range registeredChannels {
-		channel.Send(notification, context)
-	}
-}
+import "github.com/qor/qor"
 
 type Notification struct {
-	gorm.Model
-	Kind    string
-	Title   string
-	Body    string
-	ReadAt  *time.Time
-	AckedAt *time.Time
-	Actions Actions
+	Config   *Config
+	Channels []ChannelInterface
 }
 
-func (notification *Notification) AddAction(action *Action) {
+func New(config *Config) *Notification {
+	return &Notification{Config: config}
 }
 
-func (notification *Notification) LoadAction() []Action {
-	return []Action{}
+func (notification *Notification) RegisterChannel(channel ChannelInterface) {
+	notification.Channels = append(notification.Channels, channel)
 }
 
-type Actions struct {
-	Actions []Action
-}
-
-// (*Actions) Scanner, Valuer
-
-type Action struct {
-	Name string
-	URL  string
-	serializable_meta.SerializableMeta
+func (notification *Notification) Send(message *Message, context *qor.Context) {
+	for _, channel := range notification.Channels {
+		channel.Send(message, context)
+	}
 }

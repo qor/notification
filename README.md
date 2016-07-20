@@ -1,6 +1,6 @@
 # QOR Notification
 
-QOR Notification
+QOR Notification (WIP)
 
 ## Usage
 
@@ -19,3 +19,7 @@ type Notification struct {
 
 notification.RegisterChannel()
 ```
+
+## License
+
+Released under the [MIT License](http://opensource.org/licenses/MIT).
