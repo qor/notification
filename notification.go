@@ -25,6 +25,10 @@ func (notification *Notification) Send(message *Message, context *qor.Context) {
 	}
 }
 
+func (notification *Notification) GetMessages(context *qor.Context) []*Message {
+	return []*Message{}
+}
+
 func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 	if res, ok := res.(*admin.Resource); ok {
 		Admin := res.GetAdmin()
