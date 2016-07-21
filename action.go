@@ -10,7 +10,7 @@ func (notification *Notification) Action(action *Action) {
 }
 
 type ActionArgument struct {
-	Message  *Message
+	Message  *QorNotification
 	Context  *admin.Context
 	Argument interface{}
 }

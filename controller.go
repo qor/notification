@@ -14,17 +14,19 @@ type controller struct {
 
 func (c *controller) List(context *admin.Context) {
 	context.Execute("notifications", map[string]interface{}{
-		"Messages": c.Notification.GetMessages(context.Context),
+		"Messages": c.Notification.GetNotifications(context.CurrentUser, context.Context),
 	})
 }
 
 func (c *controller) Action(context *admin.Context) {
 	action := c.action
+	message := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
 
 	if context.Request.Method == "GET" {
 		context.Execute("action", action)
 	} else {
-		var actionArgument = ActionArgument{
+		var actionArgument = &ActionArgument{
+			Message: message,
 			Context: context,
 		}
 
@@ -34,17 +36,17 @@ func (c *controller) Action(context *admin.Context) {
 			actionArgument.Argument = result
 		}
 
-		if err := action.Handle(&actionArgument); err == nil {
-			message := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Executed successfully", action))
+		if err := action.Handle(actionArgument); err == nil {
+			notice := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Executed successfully", action))
 			responder.With("html", func() {
-				context.Flash(message, "success")
+				context.Flash(notice, "success")
 				http.Redirect(context.Writer, context.Request, context.Request.Referer(), http.StatusFound)
 			}).With("json", func() {
-				context.JSON("OK", map[string]string{"message": message, "status": "ok"})
+				context.JSON("OK", map[string]string{"message": notice, "status": "ok"})
 			}).Respond(context.Request)
 		} else {
-			message := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to execute", action))
-			context.JSON("OK", map[string]string{"error": message, "status": "error"})
+			notice := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to execute", action))
+			context.JSON("OK", map[string]string{"error": notice, "status": "error"})
 		}
 	}
 }
