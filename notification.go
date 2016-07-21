@@ -28,6 +28,8 @@ func (notification *Notification) Send(message *Message, context *qor.Context) {
 func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 	if res, ok := res.(*admin.Resource); ok {
 		Admin := res.GetAdmin()
+		Admin.RegisterViewPath("github.com/qor/notification/views")
+
 		router := Admin.GetRouter()
 		notificationController := controller{Notification: notification}
 
