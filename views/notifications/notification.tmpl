@@ -1,0 +1,13 @@
+{{$message := .Result}}
+
+<div class="notification">
+  {{$message.MessageType}}
+
+  <div class="title">
+    {{$message.Title}}
+  </div>
+
+  <div class="body">
+    {{$message.Body}}
+  </div>
+</div>

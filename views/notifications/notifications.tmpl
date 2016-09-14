@@ -1,0 +1,5 @@
+<div class="qor-form-container" data-slideout-type="mini">
+  {{range $message := .Result.Messages}}
+    {{render "notifications/notification" $message}}
+  {{end}}
+</div>

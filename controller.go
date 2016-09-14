@@ -13,7 +13,7 @@ type controller struct {
 }
 
 func (c *controller) List(context *admin.Context) {
-	context.Execute("notifications", map[string]interface{}{
+	context.Execute("notifications/notifications", map[string]interface{}{
 		"Messages": c.Notification.GetNotifications(context.CurrentUser, context.Context),
 	})
 }
