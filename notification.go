@@ -19,17 +19,21 @@ func New(config *Config) *Notification {
 	return &Notification{Config: config}
 }
 
-func (notification *Notification) Send(message *Message, context *qor.Context) {
+func (notification *Notification) Send(message *Message, context *qor.Context) error {
 	for _, channel := range notification.Channels {
-		channel.Send(message, context)
+		if err := channel.Send(message, context); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func (notification *Notification) GetNotifications(user interface{}, context *qor.Context) (notifications []*QorNotification) {
+func (notification *Notification) GetNotifications(user interface{}, context *qor.Context) []*QorNotification {
+	var notifications = &[]*QorNotification{}
 	for _, channel := range notification.Channels {
 		channel.GetNotifications(user, notifications, context)
 	}
-	return
+	return *notifications
 }
 
 func (notification *Notification) GetNotification(user interface{}, messageID string, context *qor.Context) *QorNotification {
