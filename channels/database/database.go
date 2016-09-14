@@ -21,10 +21,11 @@ type Database struct {
 
 func (database *Database) Send(message *notification.Message, context *qor.Context) error {
 	notice := notification.QorNotification{
-		From:  database.getUserID(message.From, context),
-		To:    database.getUserID(message.To, context),
-		Title: message.Title,
-		Body:  message.Body,
+		From:        database.getUserID(message.From, context),
+		To:          database.getUserID(message.To, context),
+		Title:       message.Title,
+		Body:        message.Body,
+		MessageType: message.MessageType,
 	}
 
 	return context.GetDB().Save(&notice).Error
@@ -33,8 +34,9 @@ func (database *Database) Send(message *notification.Message, context *qor.Conte
 func (database *Database) GetNotifications(user interface{}, notifications *[]*notification.QorNotification, context *qor.Context) error {
 	var newNotifications []*notification.QorNotification
 	var to = database.getUserID(user, context)
+	var db = context.GetDB()
 
-	err := context.GetDB().Find(&newNotifications, "to = ?", to).Error
+	err := db.Find(&newNotifications, fmt.Sprintf("%v = ?", db.Dialect().Quote("to")), to).Error
 	*notifications = append(*notifications, newNotifications...)
 	return err
 }
@@ -43,10 +45,10 @@ func (database *Database) GetNotification(user interface{}, notificationID strin
 	var (
 		notice notification.QorNotification
 		to     = database.getUserID(user, context)
+		db     = context.GetDB()
 	)
 
-	err := context.GetDB().First(&notice, "to = ? AND id = ?", to, notificationID).Error
-
+	err := db.First(&notice, fmt.Sprintf("%v = ? AND %v = ?", db.Dialect().Quote("to"), db.Dialect().Quote("id")), to, notificationID).Error
 	return &notice, err
 }
 
