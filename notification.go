@@ -6,6 +6,7 @@ import (
 	"github.com/qor/admin"
 	"github.com/qor/qor"
 	"github.com/qor/qor/resource"
+	"github.com/qor/qor/utils"
 	"github.com/qor/roles"
 )
 
@@ -49,6 +50,10 @@ func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 	if res, ok := res.(*admin.Resource); ok {
 		Admin := res.GetAdmin()
 		Admin.RegisterViewPath("github.com/qor/notification/views")
+
+		if len(notification.Channels) == 0 {
+			utils.ExitWithMsg("No channel defined for notification")
+		}
 
 		router := Admin.GetRouter()
 		notificationController := controller{Notification: notification}
