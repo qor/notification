@@ -6,6 +6,18 @@ import (
 )
 
 func (notification *Notification) Action(action *Action) {
+	if action.Label == "" {
+		action.Label = utils.HumanizeString(action.Name)
+	}
+
+	if action.Method == "" {
+		if action.URL != nil {
+			action.Method = "GET"
+		} else {
+			action.Method = "PUT"
+		}
+	}
+
 	notification.Actions = append(notification.Actions, action)
 }
 
@@ -17,11 +29,12 @@ type ActionArgument struct {
 
 type Action struct {
 	Name        string
+	Label       string
 	Method      string
 	MessageType string
-	URL         string
 	Resource    *admin.Resource
 	Visible     func(data interface{}, context *admin.Context) bool
+	URL         func(data interface{}, context *admin.Context) string
 	Handle      func(*ActionArgument) error
 }
 
