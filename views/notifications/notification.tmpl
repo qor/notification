@@ -10,4 +10,10 @@
   <div class="body">
     {{$message.Body}}
   </div>
+
+  <div class="actions">
+    {{range $action := $message.Actions .}}
+       {{$action.Name}}
+    {{end}}
+  </div>
 </div>

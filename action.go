@@ -16,11 +16,13 @@ type ActionArgument struct {
 }
 
 type Action struct {
-	Name     string
-	Method   string
-	URL      string
-	Resource *admin.Resource
-	Handle   func(*ActionArgument) error
+	Name        string
+	Method      string
+	MessageType string
+	URL         string
+	Resource    *admin.Resource
+	Visible     func(data interface{}, context *admin.Context) bool
+	Handle      func(*ActionArgument) error
 }
 
 // ToParam used to register routes for actions

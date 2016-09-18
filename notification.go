@@ -34,6 +34,11 @@ func (notification *Notification) GetNotifications(user interface{}, context *qo
 	for _, channel := range notification.Channels {
 		channel.GetNotifications(user, notifications, context)
 	}
+
+	for _, n := range *notifications {
+		n.Notification = notification
+	}
+
 	return *notifications
 }
 
