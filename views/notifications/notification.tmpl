@@ -20,7 +20,7 @@
          </a>
        {{else}}
          <button class="mdl-button mdl-button--colored mdl-button--raised mdl-js-button qor-action-button" type="button"
-                                                                                                           data-url="{{if $action.URL}}{{call $action.URL $message $context}}{{else}}{{$context.Admin.GetRouter.Prefix}}/!notification/{{$action.ToParam}}{{end}}"
+                                                                                                           data-url="{{if $action.URL}}{{call $action.URL $message $context}}{{else}}{{$context.Admin.GetRouter.Prefix}}/!notifications/{{primary_key_of $message}}/{{$action.ToParam}}{{end}}"
                                                                                                            {{if not $action.Resource}}data-ajax-form="true" data-dataType="json" data-confirm="{{t "qor_admin.form.are_you_sure" "Are You Sure?"}}" data-method="{{$action.Method}}"{{end}}>
              {{t (printf "qor_notification.actions.%v" $action.Label) $action.Label}}
          </button>

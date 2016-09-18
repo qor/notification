@@ -18,6 +18,10 @@ func (notification *Notification) Action(action *Action) {
 		}
 	}
 
+	if action.Resource != nil && action.Handle == nil {
+		utils.ExitWithMsg("No Handler registered for action")
+	}
+
 	notification.Actions = append(notification.Actions, action)
 }
 

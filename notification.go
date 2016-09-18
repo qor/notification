@@ -70,7 +70,7 @@ func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 
 		for _, action := range notification.Actions {
 			actionController := controller{Notification: notification, action: action}
-			router.Get(path.Join("!notifications", res.ParamIDName(), action.ToParam()), actionController.List, admin.RouteConfig{
+			router.Get(path.Join("!notifications", res.ParamIDName(), action.ToParam()), actionController.Action, admin.RouteConfig{
 				PermissionMode: roles.Update,
 				Resource:       res,
 			})
