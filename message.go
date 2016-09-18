@@ -22,11 +22,15 @@ type QorNotification struct {
 	Title        string
 	Body         string `sql:"size:65532"`
 	MessageType  string
-	AckedAt      *time.Time
+	ResolvedAt   *time.Time
 	Notification *Notification `sql:"-"`
 }
 
-func (qorNotification *QorNotification) Actions(context *admin.Context) (actions []*Action) {
+func (qorNotification QorNotification) IsResolved() bool {
+	return qorNotification.ResolvedAt != nil
+}
+
+func (qorNotification QorNotification) Actions(context *admin.Context) (actions []*Action) {
 	for _, action := range qorNotification.Notification.Actions {
 		if qorNotification.MessageType == action.MessageType {
 			if action.Visible != nil {

@@ -1,7 +1,7 @@
 {{$message := .Result}}
 {{$context := .}}
 
-<div class="notification">
+<div class="notification{{if $message.IsResolved}} resolved{{end}}">
   {{$message.MessageType}}
 
   <div class="title">
