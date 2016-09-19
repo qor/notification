@@ -1,0 +1,13 @@
+.qor-notifications{
+    @at-root #{&}__actions{
+        text-align: right;
+    }
+    @at-root #{&}__title{
+        font-size: 16px;
+        margin: 0;
+        font-weight: 500;
+    }
+    @at-root #{&}__body{
+        color: rgba(0, 0, 0, .54);
+    }
+}
