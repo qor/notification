@@ -1,11 +1,19 @@
 .qor-notifications{
+    .resolved{
+        background-color: rgba(0, 0, 0, .12);
+    }
     @at-root #{&}__actions{
         text-align: right;
     }
     @at-root #{&}__title{
         font-size: 16px;
         margin: 0;
+        margin-bottom: 8px;
         font-weight: 500;
+    }
+    @at-root #{&}__resolved{
+        margin-top: 16px;
+        margin-bottom: -29px;
     }
     @at-root #{&}__body{
         color: rgba(0, 0, 0, .54);

@@ -7,8 +7,17 @@
   </h4>
 
   <div class="qor-notifications__body">
-    {{$message.Body}}
+    {{$message.Body}} Icons on the right side of the app bar are app-related actions. The menu icon opens the overflow menu, which contains secondary actions and menu items like help, settings, and feedback.
   </div>
+
+  {{if $message.IsResolved}}
+    <div class="qor-notifications__resolved">
+      <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" title="{{t "qor_admin.notification.resolved" "resolved"}}">
+        <input type="checkbox" class="mdl-checkbox__input ignore-dirtyform" checked disabled>
+        <span class="mdl-checkbox__label">{{t "qor_admin.notification.resolved" "resolved"}}</span>
+      </label>
+    </div>
+  {{end}}
 
   <div class="qor-notifications__actions">
     {{range $action := $message.Actions $context}}
