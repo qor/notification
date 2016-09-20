@@ -1,7 +1,15 @@
 {{stylesheet_tag "notifications"}}
+{{$messages := .Result.Messages}}
 
 <div class="qor-form-container qor-notifications" data-slideout-type="mini">
-    {{range $message := .Result.Messages}}
-        {{render "notifications/notification" $message}}
+  {{range $message := $messages.Notifications}}
+    {{render "notifications/notification" $message}}
+  {{end}}
+
+  {{if $messages.Resolved}}
+    <span>{{t "qor_notification.hints.archived_notifications" "Archived Notifications"}}</span>
+    {{range $message := $messages.Resolved}}
+      {{render "notifications/notification" $message}}
     {{end}}
+  {{end}}
 </div>

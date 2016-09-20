@@ -8,6 +8,6 @@ func (notification *Notification) RegisterChannel(channel ChannelInterface) {
 
 type ChannelInterface interface {
 	Send(message *Message, context *qor.Context) error
-	GetNotifications(user interface{}, notifications *[]*QorNotification, context *qor.Context) error
-	GetNotification(user interface{}, notificationID string, context *qor.Context) (*QorNotification, error)
+	GetNotifications(user interface{}, results *NotificationsResult, notification *Notification, context *qor.Context) error
+	GetNotification(user interface{}, notificationID string, notification *Notification, context *qor.Context) (*QorNotification, error)
 }

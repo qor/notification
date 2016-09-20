@@ -17,13 +17,12 @@ type Message struct {
 
 type QorNotification struct {
 	gorm.Model
-	From         string
-	To           string
-	Title        string
-	Body         string `sql:"size:65532"`
-	MessageType  string
-	ResolvedAt   *time.Time
-	Notification *Notification `sql:"-"`
+	From        string
+	To          string
+	Title       string
+	Body        string `sql:"size:65532"`
+	MessageType string
+	ResolvedAt  *time.Time
 }
 
 func (qorNotification QorNotification) IsResolved() bool {

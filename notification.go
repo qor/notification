@@ -29,22 +29,27 @@ func (notification *Notification) Send(message *Message, context *qor.Context) e
 	return nil
 }
 
-func (notification *Notification) GetNotifications(user interface{}, context *qor.Context) []*QorNotification {
-	var notifications = &[]*QorNotification{}
+type NotificationsResult struct {
+	Notification  *Notification
+	Notifications []*QorNotification
+	Resolved      []*QorNotification
+}
+
+func (notification *Notification) GetNotifications(user interface{}, context *qor.Context) *NotificationsResult {
+	var results = NotificationsResult{
+		Notification: notification,
+	}
+
 	for _, channel := range notification.Channels {
-		channel.GetNotifications(user, notifications, context)
+		channel.GetNotifications(user, &results, notification, context)
 	}
 
-	for _, n := range *notifications {
-		n.Notification = notification
-	}
-
-	return *notifications
+	return &results
 }
 
 func (notification *Notification) GetNotification(user interface{}, messageID string, context *qor.Context) *QorNotification {
 	for _, channel := range notification.Channels {
-		if message, err := channel.GetNotification(user, messageID, context); err == nil {
+		if message, err := channel.GetNotification(user, messageID, notification, context); err == nil {
 			return message
 		}
 	}
