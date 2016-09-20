@@ -22,7 +22,7 @@
   <div class="qor-notifications__actions">
     {{range $action := $message.Actions $context}}
        {{if (and $action.URL (eq $action.Method "GET"))}}
-         <a class="mdl-button mdl-button--colored qor-action-button qor-action-button--link" href="{{call $action.URL $message $context}}" target="_blank">
+         <a class="mdl-button mdl-button--colored" href="{{call $action.URL $message $context}}" target="_blank">
            {{t (printf "qor_notification.actions.%v" $action.Label) $action.Label}}
          </a>
        {{else}}
