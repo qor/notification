@@ -52,6 +52,15 @@ func (database *Database) GetNotifications(user interface{}, results *notificati
 	return db.Order("created_at DESC").Find(&results.Resolved, fmt.Sprintf("%v = ? AND %v IS NOT NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error
 }
 
+func (database *Database) GetUnresolvedNotificationsCount(user interface{}, _ *notification.Notification, context *qor.Context) uint {
+	var to = database.getUserID(user, context)
+	var db = context.GetDB()
+
+	var result uint
+	db.Model(&notification.QorNotification{}).Where(fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Count(&result)
+	return result
+}
+
 func (database *Database) GetNotification(user interface{}, notificationID string, _ *notification.Notification, context *qor.Context) (*notification.QorNotification, error) {
 	var (
 		notice notification.QorNotification

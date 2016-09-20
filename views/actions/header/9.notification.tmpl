@@ -1,4 +1,7 @@
+{{stylesheet_tag "notifications"}}
+{{$unresolved_notifications_count := (unresolved_notifications_count .)}}
 {{$notification_url := printf "%v/%v" .Admin.GetRouter.Prefix "!notifications"}}
 <label class="mdl-button mdl-js-button mdl-button--icon" data-upgraded=",MaterialButton" data-url="{{$notification_url}}">
+  {{if $unresolved_notifications_count}}<span class="unread_count">{{$unresolved_notifications_count}}</span>{{end}}
   <i class="material-icons">notifications</i>
 </label>

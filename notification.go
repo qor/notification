@@ -48,6 +48,14 @@ func (notification *Notification) GetNotifications(user interface{}, context *qo
 	return &results
 }
 
+func (notification *Notification) GetUnresolvedNotificationsCount(user interface{}, context *qor.Context) uint {
+	var result uint
+	for _, channel := range notification.Channels {
+		result += channel.GetUnresolvedNotificationsCount(user, notification, context)
+	}
+	return result
+}
+
 func (notification *Notification) GetNotification(user interface{}, messageID string, context *qor.Context) *QorNotification {
 	for _, channel := range notification.Channels {
 		if message, err := channel.GetNotification(user, messageID, notification, context); err == nil {
@@ -65,6 +73,10 @@ func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 		if len(notification.Channels) == 0 {
 			utils.ExitWithMsg("No channel defined for notification")
 		}
+
+		Admin.RegisterFuncMap("unresolved_notifications_count", func(context *admin.Context) uint {
+			return notification.GetUnresolvedNotificationsCount(context.CurrentUser, context.Context)
+		})
 
 		router := Admin.GetRouter()
 		notificationController := controller{Notification: notification}
