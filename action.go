@@ -57,8 +57,8 @@ type Action struct {
 	Method      string
 	MessageType string
 	Resource    *admin.Resource
-	Visible     func(data interface{}, context *admin.Context) bool
-	URL         func(data interface{}, context *admin.Context) string
+	Visible     func(data *QorNotification, context *admin.Context) bool
+	URL         func(data *QorNotification, context *admin.Context) string
 	Handle      func(*ActionArgument) error
 }
 

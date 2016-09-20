@@ -30,7 +30,7 @@ func (qorNotification QorNotification) IsResolved() bool {
 	return qorNotification.ResolvedAt != nil
 }
 
-func (qorNotification QorNotification) Actions(context *admin.Context) (actions []*Action) {
+func (qorNotification *QorNotification) Actions(context *admin.Context) (actions []*Action) {
 	var globalActions []*Action
 	if n := context.Get("Notification"); n != nil {
 		if notification, ok := n.(*Notification); ok {
