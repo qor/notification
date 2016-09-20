@@ -8,6 +8,7 @@
     }
     @at-root #{&}__actions{
         text-align: right;
+        float: right;
     }
     @at-root #{&}__title{
         font-size: 16px;
@@ -16,8 +17,8 @@
         font-weight: 500;
     }
     @at-root #{&}__resolved{
-        margin-top: 16px;
-        margin-bottom: -29px;
+        margin-top: 6px;
+        float: left;
     }
     @at-root #{&}__unread{
         position: absolute;
