@@ -30,15 +30,19 @@ func (qorNotification QorNotification) IsResolved() bool {
 }
 
 func (qorNotification QorNotification) Actions(context *admin.Context) (actions []*Action) {
-	for _, action := range qorNotification.Notification.Actions {
-		if qorNotification.MessageType == action.MessageType {
-			if action.Visible != nil {
-				if !action.Visible(qorNotification, context) {
-					continue
+	if n := context.Get("Notification"); n != nil {
+		if notification, ok := n.(*Notification); ok {
+			for _, action := range notification.Actions {
+				if qorNotification.MessageType == action.MessageType {
+					if action.Visible != nil {
+						if !action.Visible(qorNotification, context) {
+							continue
+						}
+					}
+
+					actions = append(actions, action)
 				}
 			}
-
-			actions = append(actions, action)
 		}
 	}
 

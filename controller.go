@@ -13,6 +13,7 @@ type controller struct {
 }
 
 func (c *controller) List(context *admin.Context) {
+	context.Set("Notification", c.Notification)
 	context.Execute("notifications/notifications", map[string]interface{}{
 		"Messages": c.Notification.GetNotifications(context.CurrentUser, context.Context),
 	})
@@ -21,6 +22,7 @@ func (c *controller) List(context *admin.Context) {
 func (c *controller) Action(context *admin.Context) {
 	action := c.action
 	message := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
+	context.Set("Notification", c.Notification)
 
 	if context.Request.Method == "GET" {
 		context.Execute("action", action)
