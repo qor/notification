@@ -3,14 +3,13 @@ package notification
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/qor/admin"
 	"github.com/qor/qor/utils"
 )
 
 func (notification *Notification) Action(action *Action) error {
-	if a := notification.GetAction(action.Name); a != nil && a.MessageType == action.MessageType {
+	if a := notification.GetAction(action.Name); a != nil {
 		message := fmt.Sprintf("Action %v already registered", action.Name)
 		fmt.Println(message)
 		return errors.New(message)
@@ -38,7 +37,7 @@ func (notification *Notification) Action(action *Action) error {
 
 func (notification *Notification) GetAction(name string) *Action {
 	for _, action := range notification.Actions {
-		if action.Name == name {
+		if utils.ToParamString(action.Name) == utils.ToParamString(name) {
 			return action
 		}
 	}
@@ -52,20 +51,29 @@ type ActionArgument struct {
 }
 
 type Action struct {
-	Name        string
-	Label       string
-	Method      string
-	MessageType string
-	Resource    *admin.Resource
-	Visible     func(data *QorNotification, context *admin.Context) bool
-	URL         func(data *QorNotification, context *admin.Context) string
-	Handle      func(*ActionArgument) error
+	Name         string
+	Label        string
+	Method       string
+	MessageTypes []string
+	Resource     *admin.Resource
+	Visible      func(data *QorNotification, context *admin.Context) bool
+	URL          func(data *QorNotification, context *admin.Context) string
+	Handle       func(*ActionArgument) error
 }
 
 // ToParam used to register routes for actions
 func (action Action) ToParam() string {
-	if action.MessageType == "" {
-		return utils.ToParamString(action.Name)
+	return utils.ToParamString(action.Name)
+}
+
+func (action Action) HasMessageType(t string) bool {
+	for _, mt := range action.MessageTypes {
+		if mt == t {
+			return true
+		}
 	}
-	return strings.Join([]string{utils.ToParamString(action.MessageType), utils.ToParamString(action.Name)}, "/")
+	if len(action.MessageTypes) == 0 {
+		return true
+	}
+	return false
 }

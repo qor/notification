@@ -35,14 +35,14 @@ func (qorNotification *QorNotification) Actions(context *admin.Context) (actions
 	if n := context.Get("Notification"); n != nil {
 		if notification, ok := n.(*Notification); ok {
 			for _, action := range notification.Actions {
-				if qorNotification.MessageType == action.MessageType || action.MessageType == "" {
+				if action.HasMessageType(qorNotification.MessageType) {
 					if action.Visible != nil {
 						if !action.Visible(qorNotification, context) {
 							continue
 						}
 					}
 
-					if action.MessageType == "" {
+					if len(action.MessageTypes) == 0 {
 						globalActions = append(globalActions, action)
 					} else {
 						actions = append(actions, action)
