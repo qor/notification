@@ -17,7 +17,8 @@ type Notification struct {
 }
 
 func New(config *Config) *Notification {
-	return &Notification{Config: config}
+	notification := &Notification{Config: config}
+	return notification
 }
 
 func (notification *Notification) Send(message *Message, context *qor.Context) error {

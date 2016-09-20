@@ -13,6 +13,7 @@ type Message struct {
 	Title       string
 	Body        string
 	MessageType string
+	ResolvedAt  *time.Time
 }
 
 type QorNotification struct {
@@ -30,25 +31,26 @@ func (qorNotification QorNotification) IsResolved() bool {
 }
 
 func (qorNotification QorNotification) Actions(context *admin.Context) (actions []*Action) {
+	var globalActions []*Action
 	if n := context.Get("Notification"); n != nil {
 		if notification, ok := n.(*Notification); ok {
 			for _, action := range notification.Actions {
-				if qorNotification.MessageType == action.MessageType {
+				if qorNotification.MessageType == action.MessageType || action.MessageType == "" {
 					if action.Visible != nil {
 						if !action.Visible(qorNotification, context) {
 							continue
 						}
 					}
 
-					actions = append(actions, action)
+					if action.MessageType == "" {
+						globalActions = append(globalActions, action)
+					} else {
+						actions = append(actions, action)
+					}
 				}
 			}
 		}
 	}
 
-	if len(actions) == 0 {
-		return []*Action{}
-	}
-
-	return
+	return append(actions, globalActions...)
 }

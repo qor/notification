@@ -33,6 +33,7 @@ func (database *Database) Send(message *notification.Message, context *qor.Conte
 		Title:       message.Title,
 		Body:        message.Body,
 		MessageType: message.MessageType,
+		ResolvedAt:  message.ResolvedAt,
 	}
 
 	return context.GetDB().Save(&notice).Error
