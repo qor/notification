@@ -1,12 +1,12 @@
 {{$messages := .Result.Messages}}
 
-<div class="qor-form-container qor-notifications" data-slideout-type="mini">
+<div class="qor-form-container qor-notifications" data-slideout-type="mini" data-toggle="qor.action.bulk">
   {{range $message := $messages.Notifications}}
     {{render "notifications/notification" $message}}
   {{end}}
 
   {{if $messages.Resolved}}
-    <span>{{t "qor_notification.hints.archived_notifications" "Archived Notifications"}}</span>
+    <h6>{{t "qor_notification.hints.archived_notifications" "Archived Notifications"}}</h6>
     {{range $message := $messages.Resolved}}
       {{render "notifications/notification" $message}}
     {{end}}
