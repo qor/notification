@@ -46,5 +46,9 @@ func (qorNotification QorNotification) Actions(context *admin.Context) (actions 
 		}
 	}
 
+	if len(actions) == 0 {
+		return []*Action{}
+	}
+
 	return
 }

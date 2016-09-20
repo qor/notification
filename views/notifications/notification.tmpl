@@ -7,7 +7,7 @@
   </h4>
 
   <div class="qor-notifications__body">
-    {{$message.Body}}
+    {{raw $message.Body}}
   </div>
 
   {{if $message.IsResolved}}

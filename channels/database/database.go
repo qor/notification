@@ -43,12 +43,12 @@ func (database *Database) GetNotifications(user interface{}, results *notificati
 	var db = context.GetDB()
 
 	// get unresolved notifications
-	if err := db.Find(&results.Notifications, fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error; err != nil {
+	if err := db.Order("created_at DESC").Find(&results.Notifications, fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error; err != nil {
 		return err
 	}
 
 	// get resolved notifications
-	return db.Find(&results.Resolved, fmt.Sprintf("%v = ? AND %v IS NOT NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error
+	return db.Order("created_at DESC").Find(&results.Resolved, fmt.Sprintf("%v = ? AND %v IS NOT NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error
 }
 
 func (database *Database) GetNotification(user interface{}, notificationID string, _ *notification.Notification, context *qor.Context) (*notification.QorNotification, error) {
