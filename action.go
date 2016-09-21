@@ -59,6 +59,7 @@ type Action struct {
 	Visible      func(data *QorNotification, context *admin.Context) bool
 	URL          func(data *QorNotification, context *admin.Context) string
 	Handle       func(*ActionArgument) error
+	Undo         func(*ActionArgument) error
 }
 
 // ToParam used to register routes for actions

@@ -1,7 +1,7 @@
 {{$message := .Result}}
 {{$context := .}}
 
-<div class="qor-fieldset notification{{if $message.IsResolved}} resolved{{end}} {{$message.MessageType}} clearfix">
+<div class="qor-fieldset notification{{if $message.IsResolved}} resolved{{end}} {{$message.MessageType}} clearfix" data-notification-id="{{$message.ID}}">
   <h4 class="qor-notifications__title">
     {{$message.Title}}
   </h4>
@@ -21,18 +21,27 @@
 
   <div class="qor-notifications__actions">
     {{range $action := $message.Actions $context}}
-       {{if (and $action.URL (eq $action.Method "GET"))}}
-         <a class="mdl-button mdl-button--colored" href="{{call $action.URL $message $context}}" target="_blank">
-           {{t (printf "qor_notification.actions.%v" $action.Label) $action.Label}}
-         </a>
-       {{else}}
-         <button  class="mdl-button mdl-button--colored mdl-js-button qor-action-button"
-                  type="button"
-                  data-url="{{if $action.URL}}{{call $action.URL $message $context}}{{else}}{{$context.Admin.GetRouter.Prefix}}/!notifications/{{primary_key_of $message}}/{{$action.ToParam}}{{end}}"
-                  {{if not $action.Resource}}data-ajax-form="true" data-dataType="json" data-confirm="{{t "qor_admin.form.are_you_sure" "Are You Sure?"}}" data-method="{{$action.Method}}"{{end}}>
-            {{t (printf "qor_notification.actions.%v" $action.Label) $action.Label}}
-         </button>
-       {{end}}
-     {{end}}
+      {{if (and $action.URL (eq $action.Method "GET"))}}
+        <a class="mdl-button mdl-button--colored" href="{{call $action.URL $message $context}}" target="_blank">
+          {{t (printf "qor_notification.actions.%v" $action.Label) $action.Label}}
+        </a>
+      {{else}}
+        <button  class="mdl-button mdl-button--colored mdl-js-button qor-action-button"
+                 type="button"
+                 data-url="{{if $action.URL}}{{call $action.URL $message $context}}{{else}}{{$context.Admin.GetRouter.Prefix}}/!notifications/{{primary_key_of $message}}/{{$action.ToParam}}{{end}}"
+                 {{if not $action.Resource}}
+                   data-ajax-form="true"
+                   data-dataType="json"
+                   {{if $action.Undo}}
+                     data-undo-url="{{if $action.URL}}{{call $action.URL $message $context}}{{else}}{{$context.Admin.GetRouter.Prefix}}/!notifications/{{primary_key_of $message}}/{{$action.ToParam}}{{end}}/undo"
+                   {{else}}
+                     data-confirm="{{t "qor_admin.form.are_you_sure" "Are You Sure?"}}"
+                   {{end}}
+                   data-method="{{$action.Method}}"
+                 {{end}}>
+          {{t (printf "qor_notification.actions.%v" $action.Label) $action.Label}}
+        </button>
+      {{end}}
+    {{end}}
   </div>
 </div>

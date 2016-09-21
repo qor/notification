@@ -97,6 +97,13 @@ func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 				PermissionMode: roles.Update,
 				Resource:       res,
 			})
+
+			if action.Undo != nil {
+				router.Put(path.Join("!notifications", res.ParamIDName(), action.ToParam(), "undo"), actionController.UndoAction, admin.RouteConfig{
+					PermissionMode: roles.Update,
+					Resource:       res,
+				})
+			}
 		}
 	}
 }

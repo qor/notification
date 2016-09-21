@@ -39,16 +39,50 @@ func (c *controller) Action(context *admin.Context) {
 		}
 
 		if err := action.Handle(actionArgument); err == nil {
-			notice := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Executed successfully", action))
+			flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Executed successfully", action))
 			responder.With("html", func() {
-				context.Flash(notice, "success")
+				context.Flash(flash, "success")
 				http.Redirect(context.Writer, context.Request, context.Request.Referer(), http.StatusFound)
 			}).With("json", func() {
-				context.JSON("OK", map[string]string{"message": notice, "status": "ok"})
+				notification := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
+				context.JSON("OK", map[string]string{"status": "ok", "message": flash, "notification": string(context.Render("notification", notification))})
 			}).Respond(context.Request)
 		} else {
-			notice := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to execute", action))
-			context.JSON("OK", map[string]string{"error": notice, "status": "error"})
+			notification := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
+			flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to execute", action))
+			context.JSON("OK", map[string]string{"status": "error", "error": flash, "notification": string(context.Render("notification", notification))})
 		}
+	}
+}
+
+func (c *controller) UndoAction(context *admin.Context) {
+	action := c.action
+	message := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
+	context.Set("Notification", c.Notification)
+
+	var actionArgument = &ActionArgument{
+		Message: message,
+		Context: context,
+	}
+
+	if action.Resource != nil {
+		result := action.Resource.NewStruct()
+		action.Resource.Decode(context.Context, result)
+		actionArgument.Argument = result
+	}
+
+	if err := action.Undo(actionArgument); err == nil {
+		flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Undoed successfully", action))
+		responder.With("html", func() {
+			context.Flash(flash, "success")
+			http.Redirect(context.Writer, context.Request, context.Request.Referer(), http.StatusFound)
+		}).With("json", func() {
+			notification := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
+			context.JSON("OK", map[string]string{"status": "ok", "message": flash, "notification": string(context.Render("notification", notification))})
+		}).Respond(context.Request)
+	} else {
+		notification := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
+		flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to undo", action))
+		context.JSON("OK", map[string]string{"status": "error", "error": flash, "notification": string(context.Render("notification", notification))})
 	}
 }
