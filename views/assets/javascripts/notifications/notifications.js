@@ -41,21 +41,17 @@
     undo: function (e, $actionButton, isUndo, data) {
       var actionData = $actionButton.data(),
           undoType = actionData.undoType,
-          $item = $actionButton.closest(UNDO_CONTAINER).length ? $actionButton.closest(UNDO_CONTAINER) : $actionButton.closest(BUTTON_UNDO).prev(UNDO_CONTAINER),
-          $template,
-          template = QorNotification.UNDO_HTML;
+          $undoContainer = $actionButton.closest(UNDO_CONTAINER),
+          $item = $undoContainer.length ? $undoContainer : $actionButton.closest(BUTTON_UNDO).prev(UNDO_CONTAINER),
+          $template;
 
-      data.undoLabel = actionData.undoLabel,
-      $template = $(window.Mustache.render(template, data));
+      data.undoLabel = actionData.undoLabel;
+      $template = $(window.Mustache.render(QorNotification.UNDO_HTML, data));
       !isUndo && $template.find('button').data(actionData);
 
       if (undoType == UNDO_TYPE) {
         $item.before(data.notification);
-        if (!isUndo) {
-          $item.after($template);
-        } else {
-          $item.next(BUTTON_UNDO).remove();
-        }
+        !isUndo ? $item.after($template) : $item.next(BUTTON_UNDO).remove();
         $item.remove();
       }
     },
