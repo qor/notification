@@ -40,13 +40,15 @@
     },
 
     load_more: function (e) {
-      var self = $(this)
+      var self = $(this);
+      self.text(self.data("loading"));
+
       $.get(self.attr("href"), function(data) {
-        var content = $(data).find(".qor-notifications")
+        var content = $(data).find(".qor-notifications");
         if ($(".qor-notifications--archived").length > 0) {
-          content.find(".qor-notifications--archived").remove()
+          content.find(".qor-notifications--archived").remove();
         }
-        self.replaceWith(content.html())
+        self.replaceWith(content.html());
       })
       return false;
     },
