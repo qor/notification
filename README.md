@@ -1,6 +1,6 @@
 # QOR Notification
 
-QOR Notification (WIP)
+QOR Notification
 
 ## Usage
 
@@ -10,25 +10,35 @@ Notification := notification.New(&notification.Config{})
 // Add to Admin
 Admin.NewResource(Notification)
 
-// Register Channels
-Notification.RegisterChannel(ChannelInterface interface {
-  Send(message *Message, context *qor.Context)
-  GetNotifications(user interface{}, notification []*QorNotification, context *qor.Context) error
-  GetNotification(user interface{}, notificationID string, context *qor.Context) (*QorNotification, error)
-})
+// Register Database Channel
+Notification.RegisterChannel(database.New(&database.Config{DB: db.DB}))
 
-// Send Message
+// Send Notification
 Notification.Send(message *Message, context *qor.Context)
 
-notification.Get(context *qor.Context) []Notification
+// Get Notificatio
+Notification.GetNotification(user interface{}, messageID string, context *qor.Context) *QorNotification
 
-type Notification struct {
-  Title string
-  Body string
-  serializable_meta.SerializableMeta
-}
+// Get Notifications
+Notification.GetNotifications(user interface{}, context *qor.Context)
 
-notification.RegisterChannel()
+// Get Unresolved Notifications Count
+Notification.GetUnresolvedNotificationsCount(user interface{}, context *qor.Context)
+```
+
+## Register Actions for Notification
+
+```go
+Notification.Action(&notification.Action{
+        Name:         "Dismiss",
+        MessageTypes: []string{"info", "order_processed", "order_returned"},
+        Visible: func(data *notification.QorNotification, context *admin.Context) bool {
+                return data.ResolvedAt == nil
+        },
+        Handle: func(argument *notification.ActionArgument) error {
+                return argument.Context.GetDB().Model(argument.Message).Update("resolved_at", time.Now()).Error
+        },
+})
 ```
 
 ## License
