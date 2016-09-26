@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 	"github.com/qor/notification"
@@ -43,13 +44,44 @@ func (database *Database) GetNotifications(user interface{}, results *notificati
 	var to = database.getUserID(user, context)
 	var db = context.GetDB()
 
+	var currentPage, perPage int
+
+	if context.Request != nil {
+		if p, err := strconv.Atoi(context.Request.URL.Query().Get("page")); err == nil {
+			currentPage = p
+		}
+
+		if p, err := strconv.Atoi(context.Request.URL.Query().Get("per_page")); err == nil {
+			perPage = p
+		}
+	}
+
+	if perPage == 0 {
+		perPage = 10
+	}
+	offset := currentPage * perPage
+
+	commonDB := db.Limit(perPage).Order("created_at DESC")
+
 	// get unresolved notifications
-	if err := db.Order("created_at DESC").Find(&results.Notifications, fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error; err != nil {
+	if err := commonDB.Offset(offset).Find(&results.Notifications, fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error; err != nil {
 		return err
 	}
 
+	if len(results.Notifications) == perPage {
+		return nil
+	}
+
+	if len(results.Notifications) == 0 {
+		var unreadedCount int
+		db.Model(&notification.QorNotification{}).Where(fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Count(&unreadedCount)
+		offset -= unreadedCount
+	} else if len(results.Notifications) < perPage {
+		offset -= len(results.Notifications)
+	}
+
 	// get resolved notifications
-	return db.Order("created_at DESC").Find(&results.Resolved, fmt.Sprintf("%v = ? AND %v IS NOT NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error
+	return commonDB.Offset(offset).Find(&results.Resolved, fmt.Sprintf("%v = ? AND %v IS NOT NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error
 }
 
 func (database *Database) GetUnresolvedNotificationsCount(user interface{}, _ *notification.Notification, context *qor.Context) uint {

@@ -2,6 +2,7 @@ package notification
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/qor/admin"
 	"github.com/qor/responder"
@@ -14,8 +15,14 @@ type controller struct {
 
 func (c *controller) List(context *admin.Context) {
 	context.Set("Notification", c.Notification)
+	var currentPage int
+	if p, err := strconv.Atoi(context.Request.URL.Query().Get("page")); err == nil {
+		currentPage = p
+	}
+
 	context.Execute("notifications/notifications", map[string]interface{}{
-		"Messages": c.Notification.GetNotifications(context.CurrentUser, context.Context),
+		"Messages":         c.Notification.GetNotifications(context.CurrentUser, context.Context),
+		"LoadMoreNextPage": currentPage + 1,
 	})
 }
 

@@ -11,4 +11,7 @@
       {{render "notifications/notification" $message}}
     {{end}}
   {{end}}
+
+  {{$notification_url := printf "%v/%v" .Admin.GetRouter.Prefix "!notifications"}}
+  <a href="{{patch_url $notification_url "page" .Result.LoadMoreNextPage}}">{{t "qor_notification.hints.load_more" "Load More..."}}</a>
 </div>
