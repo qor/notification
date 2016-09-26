@@ -1,7 +1,7 @@
 {{$message := .Result}}
 {{$context := .}}
 
-<div class="qor-fieldset notification{{if $message.IsResolved}} resolved{{end}} {{$message.MessageType}} clearfix" data-notification-id="{{$message.ID}}">
+<div class="qor-fieldset qor-notifications__item{{if $message.IsResolved}} resolved{{end}} {{$message.MessageType}} clearfix" data-notification-id="{{$message.ID}}">
   <h4 class="qor-notifications__title">
     {{$message.Title}}
   </h4>

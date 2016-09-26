@@ -1,10 +1,20 @@
 .qor-notifications{
+    margin: -16px !important;
+    > .qor-notifications__item{
+        margin: 8px 0;
+        padding: 8px 12px;
+        border-radius: 2px;
+    }
     > h6{
         margin-top: 32px;
         font-size: 14px;
+        text-align: center;
     }
     .resolved{
-        background-color: rgba(0, 0, 0, .12);
+        background-color: rgba(0, 0, 0, .08);
+    }
+    @at-root #{&}__item-undo{
+        margin-bottom: 24px;
     }
     @at-root #{&}__actions{
         text-align: right;
@@ -41,6 +51,6 @@
 
     @at-root #{&}__body{
         color: rgba(0, 0, 0, .54);
-        padding-bottom: 12px;
+        padding-bottom: 8px;
     }
 }

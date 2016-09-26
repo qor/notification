@@ -18,6 +18,8 @@
   var EVENT_DISABLE = 'disable.' + NAMESPACE;
   var EVENT_UNDO = 'undo.qor.action';
   var UNDO_TYPE = 'notification';
+  var UNDO_CONTAINER = '.qor-notifications__item';
+  var BUTTON_UNDO = '.qor-notifications__item-undo';
 
   function QorNotification(element, options) {
     this.$element = $(element);
@@ -36,18 +38,25 @@
       this.$element.on(EVENT_UNDO, $.proxy(this.undo, this));
     },
 
-    undo: function (e, $actionButton, isUndo) {
-      var data = $actionButton.data(),
-          undoType = data.undoType,
-          undoLabel = data.undoLabel,
-          orignalLabel = data.label;
+    undo: function (e, $actionButton, isUndo, data) {
+      var actionData = $actionButton.data(),
+          undoType = actionData.undoType,
+          $item = $actionButton.closest(UNDO_CONTAINER).length ? $actionButton.closest(UNDO_CONTAINER) : $actionButton.closest(BUTTON_UNDO).prev(UNDO_CONTAINER),
+          $template,
+          template = QorNotification.UNDO_HTML;
+
+      data.undoLabel = actionData.undoLabel,
+      $template = $(window.Mustache.render(template, data));
+      !isUndo && $template.find('button').data(actionData);
 
       if (undoType == UNDO_TYPE) {
+        $item.before(data.notification);
         if (!isUndo) {
-          $actionButton.html(undoLabel);
+          $item.after($template);
         } else {
-          $actionButton.html(orignalLabel);
+          $item.next(BUTTON_UNDO).remove();
         }
+        $item.remove();
       }
     },
 
@@ -62,6 +71,7 @@
   };
 
   QorNotification.DEFAULTS = {};
+  QorNotification.UNDO_HTML = '<div class="qor-notifications__item-undo"><span>[[message]]</span><button class="mdl-button mdl-button--colored qor-action-button is_undo" type="button" data-undo-type="notification">[[undoLabel]]</button></div>';
 
   QorNotification.plugin = function (options) {
     return this.each(function () {
