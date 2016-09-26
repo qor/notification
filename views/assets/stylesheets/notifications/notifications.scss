@@ -4,6 +4,7 @@
         margin: 8px 0;
         padding: 8px 12px;
         border-radius: 2px;
+        clear: both;
     }
     > h6{
         margin-top: 32px;
@@ -14,6 +15,7 @@
         background-color: rgba(0, 0, 0, .08);
     }
     @at-root #{&}__item-undo{
+        float: right;
         margin-bottom: 24px;
     }
     @at-root #{&}__actions{
