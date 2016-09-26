@@ -77,7 +77,7 @@ func (database *Database) GetNotifications(user interface{}, results *notificati
 		commonDB.Model(&notification.QorNotification{}).Where(fmt.Sprintf("%v IS NULL", db.Dialect().Quote("resolved_at"))).Count(&unreadedCount)
 		offset -= unreadedCount
 	} else if len(results.Notifications) < perPage {
-		offset -= len(results.Notifications)
+		offset = 0
 		perPage -= len(results.Notifications)
 	}
 
