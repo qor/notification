@@ -61,10 +61,10 @@ func (database *Database) GetNotifications(user interface{}, results *notificati
 	}
 	offset := currentPage * perPage
 
-	commonDB := db.Limit(perPage).Order("created_at DESC")
+	commonDB := db.Order("created_at DESC").Where(fmt.Sprintf("%v = ?", db.Dialect().Quote("to")), to)
 
 	// get unresolved notifications
-	if err := commonDB.Offset(offset).Find(&results.Notifications, fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error; err != nil {
+	if err := commonDB.Offset(offset).Limit(perPage).Find(&results.Notifications, fmt.Sprintf("%v IS NULL", db.Dialect().Quote("resolved_at"))).Error; err != nil {
 		return err
 	}
 
@@ -74,14 +74,15 @@ func (database *Database) GetNotifications(user interface{}, results *notificati
 
 	if len(results.Notifications) == 0 {
 		var unreadedCount int
-		db.Model(&notification.QorNotification{}).Where(fmt.Sprintf("%v = ? AND %v IS NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Count(&unreadedCount)
+		commonDB.Model(&notification.QorNotification{}).Where(fmt.Sprintf("%v IS NULL", db.Dialect().Quote("resolved_at"))).Count(&unreadedCount)
 		offset -= unreadedCount
 	} else if len(results.Notifications) < perPage {
 		offset -= len(results.Notifications)
+		perPage -= len(results.Notifications)
 	}
 
 	// get resolved notifications
-	return commonDB.Offset(offset).Find(&results.Resolved, fmt.Sprintf("%v = ? AND %v IS NOT NULL", db.Dialect().Quote("to"), db.Dialect().Quote("resolved_at")), to).Error
+	return commonDB.Offset(offset).Limit(perPage).Find(&results.Resolved, fmt.Sprintf("%v IS NOT NULL", db.Dialect().Quote("resolved_at"))).Error
 }
 
 func (database *Database) GetUnresolvedNotificationsCount(user interface{}, _ *notification.Notification, context *qor.Context) uint {
