@@ -46,7 +46,7 @@ func (c *controller) Action(context *admin.Context) {
 		}
 
 		if err := action.Handle(actionArgument); err == nil {
-			flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Executed successfully", action))
+			flash := action.FlashMessage(actionArgument, true /* succeed */, false /* undo */)
 			responder.With("html", func() {
 				context.Flash(flash, "success")
 				http.Redirect(context.Writer, context.Request, context.Request.Referer(), http.StatusFound)
@@ -56,8 +56,7 @@ func (c *controller) Action(context *admin.Context) {
 			}).Respond(context.Request)
 		} else {
 			notification := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
-			flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to execute", action))
-			context.JSON("OK", map[string]string{"status": "error", "error": flash, "notification": string(context.Render("notification", notification))})
+			context.JSON("OK", map[string]string{"status": "error", "error": action.FlashMessage(actionArgument, false /* succeed */, false /* undo */), "notification": string(context.Render("notification", notification))})
 		}
 	}
 }
@@ -79,7 +78,7 @@ func (c *controller) UndoAction(context *admin.Context) {
 	}
 
 	if err := action.Undo(actionArgument); err == nil {
-		flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_successfully", "Action {{.Name}}: Undoed successfully", action))
+		flash := action.FlashMessage(actionArgument, true /* succeed */, true /* undo */)
 		responder.With("html", func() {
 			context.Flash(flash, "success")
 			http.Redirect(context.Writer, context.Request, context.Request.Referer(), http.StatusFound)
@@ -89,7 +88,6 @@ func (c *controller) UndoAction(context *admin.Context) {
 		}).Respond(context.Request)
 	} else {
 		notification := c.Notification.GetNotification(context.CurrentUser, context.ResourceID, context.Context)
-		flash := string(context.Admin.T(context.Context, "qor_admin.actions.executed_failed", "Action {{.Name}}: Failed to undo", action))
-		context.JSON("OK", map[string]string{"status": "error", "error": flash, "notification": string(context.Render("notification", notification))})
+		context.JSON("OK", map[string]string{"status": "error", "error": action.FlashMessage(actionArgument, false /* succeed */, true /* undo */), "notification": string(context.Render("notification", notification))})
 	}
 }

@@ -27,6 +27,24 @@ func (notification *Notification) Action(action *Action) error {
 		}
 	}
 
+	if action.FlashMessage == nil {
+		action.FlashMessage = func(actionArgument *ActionArgument, succeed bool, isUndo bool) string {
+			context := actionArgument.Context
+
+			if succeed {
+				if isUndo {
+					return string(context.Admin.T(context.Context, "qor_admin.actions.undone", "Action {{.Name}}: Undone", action))
+				}
+				return string(context.Admin.T(context.Context, "qor_admin.actions.executed", "Action {{.Name}}: Executed", action))
+			} else {
+				if isUndo {
+					return string(context.Admin.T(context.Context, "qor_admin.actions.failed_to_undo", "Action {{.Name}}: Failed to undo", action))
+				}
+				return string(context.Admin.T(context.Context, "qor_admin.actions.failed_to_execute", "Action {{.Name}}: Failed to execute", action))
+			}
+		}
+	}
+
 	if action.Resource != nil && action.Handle == nil {
 		utils.ExitWithMsg("No Handler registered for action")
 	}
@@ -58,8 +76,9 @@ type Action struct {
 	Resource     *admin.Resource
 	Visible      func(data *QorNotification, context *admin.Context) bool
 	URL          func(data *QorNotification, context *admin.Context) string
-	Handle       func(*ActionArgument) error
-	Undo         func(*ActionArgument) error
+	Handle       func(actionArgument *ActionArgument) error
+	Undo         func(actionArgument *ActionArgument) error
+	FlashMessage func(actionArgument *ActionArgument, succeed bool, isUndo bool) string
 }
 
 // ToParam used to register routes for actions
