@@ -81,25 +81,25 @@ func (notification *Notification) ConfigureQorResource(res resource.Resourcer) {
 		router := Admin.GetRouter()
 		notificationController := controller{Notification: notification}
 
-		router.Get("!notifications", notificationController.List, admin.RouteConfig{
+		router.Get("!notifications", notificationController.List, &admin.RouteConfig{
 			PermissionMode: roles.Read,
 			Resource:       res,
 		})
 
 		for _, action := range notification.Actions {
 			actionController := controller{Notification: notification, action: action}
-			router.Get(path.Join("!notifications", res.ParamIDName(), action.ToParam()), actionController.Action, admin.RouteConfig{
+			router.Get(path.Join("!notifications", res.ParamIDName(), action.ToParam()), actionController.Action, &admin.RouteConfig{
 				PermissionMode: roles.Update,
 				Resource:       res,
 			})
 
-			router.Put(path.Join("!notifications", res.ParamIDName(), action.ToParam()), actionController.Action, admin.RouteConfig{
+			router.Put(path.Join("!notifications", res.ParamIDName(), action.ToParam()), actionController.Action, &admin.RouteConfig{
 				PermissionMode: roles.Update,
 				Resource:       res,
 			})
 
 			if action.Undo != nil {
-				router.Put(path.Join("!notifications", res.ParamIDName(), action.ToParam(), "undo"), actionController.UndoAction, admin.RouteConfig{
+				router.Put(path.Join("!notifications", res.ParamIDName(), action.ToParam(), "undo"), actionController.UndoAction, &admin.RouteConfig{
 					PermissionMode: roles.Update,
 					Resource:       res,
 				})
