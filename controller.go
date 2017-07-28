@@ -45,7 +45,7 @@ func (c *controller) Action(context *admin.Context) {
 			actionArgument.Argument = result
 		}
 
-		if err := action.Handle(actionArgument); err == nil {
+		if err := action.Handler(actionArgument); err == nil {
 			flash := action.FlashMessage(actionArgument, true /* succeed */, false /* undo */)
 			responder.With("html", func() {
 				context.Flash(flash, "success")

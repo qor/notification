@@ -45,7 +45,7 @@ func (notification *Notification) Action(action *Action) error {
 		}
 	}
 
-	if action.Resource != nil && action.Handle == nil {
+	if action.Resource != nil && action.Handler == nil {
 		utils.ExitWithMsg("No Handler registered for action")
 	}
 
@@ -76,7 +76,7 @@ type Action struct {
 	Resource     *admin.Resource
 	Visible      func(data *QorNotification, context *admin.Context) bool
 	URL          func(data *QorNotification, context *admin.Context) string
-	Handle       func(actionArgument *ActionArgument) error
+	Handler      func(actionArgument *ActionArgument) error
 	Undo         func(actionArgument *ActionArgument) error
 	FlashMessage func(actionArgument *ActionArgument, succeed bool, isUndo bool) string
 }
