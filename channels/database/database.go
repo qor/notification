@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/jinzhu/gorm"
-	"github.com/qor/notification"
+	"github.com/gstvg/notification"
 	"github.com/qor/qor"
 )
 
