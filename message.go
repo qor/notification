@@ -13,6 +13,7 @@ type Message struct {
 	Title       string
 	Body        string
 	MessageType string
+	Data        []byte
 	ResolvedAt  *time.Time
 }
 
@@ -23,6 +24,7 @@ type QorNotification struct {
 	Title       string
 	Body        string `sql:"size:65532"`
 	MessageType string
+	Data        []byte `sql:"size:65532"`
 	ResolvedAt  *time.Time
 }
 
