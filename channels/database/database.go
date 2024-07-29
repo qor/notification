@@ -34,6 +34,7 @@ func (database *Database) Send(message *notification.Message, context *qor.Conte
 		Title:       message.Title,
 		Body:        message.Body,
 		MessageType: message.MessageType,
+		Data:        message.Data,
 		ResolvedAt:  message.ResolvedAt,
 	}
 
